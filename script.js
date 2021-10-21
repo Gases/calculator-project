@@ -1,5 +1,5 @@
 //Button queries
-var hiddenNumber, hiddenOperator;
+var hiddenNumber, hiddenOperator, result;
 let equalsPressed = false;
 let numberButton = document.querySelectorAll('.number-button');
 let operationButton = document.querySelectorAll('.operation-button');
@@ -25,6 +25,10 @@ numberButton.forEach(button => button.addEventListener('click', e => {
 operationButton.forEach(button => button.addEventListener('click', e => {
     hiddenNumber = parseFloat(screen.textContent);
     hiddenOperator = e.target.id;
+    if (result) {
+        secondNumber = parseFloat(screen.textContent);
+        operations(result,secondNumber,hiddenOperator);
+    }
     screen.textContent = ''
     enableDecimal();
 }));
@@ -36,10 +40,7 @@ equalsButton.addEventListener('click', function () {
     operations(firstNumber, secondNumber, operator);
 });
 
-clearButton.addEventListener('click', function() {
-    screen.textContent = '';
-    enableDecimal();
-});
+clearButton.addEventListener('click', clearDisplay);
 
 function enableDecimal() { //Disables the decimal button after one use
     parseFloat(screen.textContent) % 1 !== 0 ? numberButton[10].disabled = true
@@ -48,21 +49,39 @@ function enableDecimal() { //Disables the decimal button after one use
 
 function operations(firstNumber, secondNumber, operator) {
     screen.textContent = '';
+    console.log(firstNumber, secondNumber, operator);
 
     switch (operator) {
         case 'plus':
-            screen.textContent += `${firstNumber + secondNumber}`;
+            result = firstNumber + secondNumber;
+            screen.textContent += `${(firstNumber + secondNumber).toFixed(3)}`;
             break;
         case 'minus':
-            screen.textContent += `${firstNumber - secondNumber}`;
+            result = firstNumber - secondNumber;
+            screen.textContent += `${(firstNumber - secondNumber).toFixed(3)}`;
             break;
         case 'multi':
-            screen.textContent += `${firstNumber * secondNumber}`;
+            result = firstNumber * secondNumber;
+            screen.textContent += `${(firstNumber * secondNumber).toFixed(3)}`;
             break;
         case 'divide':
-            screen.textContent += `${firstNumber / secondNumber}`;
+            if (secondNumber === 0) {
+            screen.textContent = `Can't do that!`;
+            } else {
+                result = firstNumber / secondNumber;
+                screen.textContent += `${(firstNumber / secondNumber).toFixed(3)}`
+            }
             break;
     }
 
     equalsPressed = true;
 }
+
+function clearDisplay() {
+    screen.textContent = '';
+    hiddenNumber = 0;
+    hiddenOperator = '';
+    enableDecimal();
+}
+
+clearDisplay;
