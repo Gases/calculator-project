@@ -8,6 +8,7 @@ let numberButton = document.querySelectorAll('.number-button').forEach(button =>
 let operationButton = document.querySelectorAll('.operation-button').forEach(button => button.addEventListener('click', operationEntry));
 let equalButton = document.querySelector('.equals-button').addEventListener('click', pressEqual);
 let clearButton = document.querySelector('#clear').addEventListener('click', clearScreen);
+let backButton = document.querySelector('#back').addEventListener('click', backspace);
 
 //Screen query
 let screen = document.querySelector('.screen');
@@ -25,6 +26,10 @@ function numberEntry(e) {
     } else {
         numberTwo = parseFloat(screen.textContent);
     }
+}
+
+function backspace() {
+    screen.textContent = screen.textContent.slice(0, -1);
 }
 
 function operationEntry(e) {
