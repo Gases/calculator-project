@@ -1,87 +1,80 @@
+//Global variables
+var numberOne, numberTwo, operation, result;
+var equalsPressed = false;
+var operationPressed = false;
+
 //Button queries
-var hiddenNumber, hiddenOperator, result;
-let equalsPressed = false;
-let numberButton = document.querySelectorAll('.number-button');
-let operationButton = document.querySelectorAll('.operation-button');
-let equalsButton = document.querySelector('.equals-button');
-let clearButton = document.querySelector('#clear');
-let backButton = document.querySelector('#back');
+let numberButton = document.querySelectorAll('.number-button').forEach(button => button.addEventListener('click', numberEntry));
+let operationButton = document.querySelectorAll('.operation-button').forEach(button => button.addEventListener('click', operationEntry));
+let equalButton = document.querySelector('.equals-button').addEventListener('click', pressEqual);
+let clearButton = document.querySelector('#clear').addEventListener('click', clearScreen);
 
 //Screen query
 let screen = document.querySelector('.screen');
 
-//Button functions
-numberButton.forEach(button => button.addEventListener('click', e => {
-    if(equalsPressed) {
+function numberEntry(e) {
+    if (equalsPressed) {
         screen.textContent = '';
-        screen.textContent += e.target.innerText;
-        equalsPressed = false;
-     } else { 
-        screen.textContent += e.target.innerText;
-     }
-    enableDecimal(); 
-}));
-
-operationButton.forEach(button => button.addEventListener('click', e => {
-    hiddenNumber = parseFloat(screen.textContent);
-    hiddenOperator = e.target.id;
-    if (result) {
-        secondNumber = parseFloat(screen.textContent);
-        operations(result,secondNumber,hiddenOperator);
     }
-    screen.textContent = ''
-    enableDecimal();
-}));
 
-equalsButton.addEventListener('click', function () {
-    firstNumber = hiddenNumber;
-    secondNumber = parseFloat(screen.textContent);
-    operator = hiddenOperator;
-    operations(firstNumber, secondNumber, operator);
-});
+    let text = e.target.innerText;
+    screen.textContent += text;
 
-clearButton.addEventListener('click', clearDisplay);
-
-function enableDecimal() { //Disables the decimal button after one use
-    parseFloat(screen.textContent) % 1 !== 0 ? numberButton[10].disabled = true
-    : numberButton[10].disabled = false;
+    if (!operationPressed) {
+        numberOne = parseFloat(screen.textContent);
+    } else {
+        numberTwo = parseFloat(screen.textContent);
+    }
 }
 
-function operations(firstNumber, secondNumber, operator) {
+function operationEntry(e) {
+    if (numberOne && numberTwo) {
+        if (result % 1 !== 0) screen.textContent += result.toFixed(5);
+        else screen.textContent += result;
+        performOperation();
+    }
+    
+    operation = e.target.id;
+    operationPressed = true;
     screen.textContent = '';
-    console.log(firstNumber, secondNumber, operator);
+}
 
-    switch (operator) {
+function pressEqual() {
+    equalsPressed = true;
+    performOperation();
+
+    if (result % 1 !== 0) screen.textContent += result.toFixed(5);
+    else screen.textContent += result;
+}
+
+function clearScreen() {
+    screen.textContent = '';
+    numberOne = 0;
+    numberTwo = 0;
+    result = 0;
+    operation = '';
+    equalsPressed = false;
+    operationPressed = false;
+}
+
+function performOperation(e) {    
+    screen.textContent = '';
+
+    switch (operation) {
         case 'plus':
-            result = firstNumber + secondNumber;
-            screen.textContent += `${(firstNumber + secondNumber).toFixed(3)}`;
+            result = numberOne + numberTwo;
             break;
         case 'minus':
-            result = firstNumber - secondNumber;
-            screen.textContent += `${(firstNumber - secondNumber).toFixed(3)}`;
+            result = numberOne - numberTwo;
             break;
         case 'multi':
-            result = firstNumber * secondNumber;
-            screen.textContent += `${(firstNumber * secondNumber).toFixed(3)}`;
+            result = numberOne * numberTwo;
             break;
         case 'divide':
-            if (secondNumber === 0) {
-            screen.textContent = `Can't do that!`;
-            } else {
-                result = firstNumber / secondNumber;
-                screen.textContent += `${(firstNumber / secondNumber).toFixed(3)}`
-            }
+            numberTwo === 0 ? screen.textContent += `Can't do that!`
+            : result = numberOne / numberTwo;
             break;
     }
 
-    equalsPressed = true;
+    numberOne = result;
 }
-
-function clearDisplay() {
-    screen.textContent = '';
-    hiddenNumber = 0;
-    hiddenOperator = '';
-    enableDecimal();
-}
-
-clearDisplay;
